@@ -2,6 +2,9 @@ import { eq } from 'drizzle-orm';
 import { db, pool } from './db/db.js';
 import { matches, commentary } from './db/schema.js';
 
+/**
+ * Demonstrates match and commentary database operations for the sports application.
+ */
 async function main() {
   try {
     console.log('Performing CRUD operations for Real-Time Sports App...');
