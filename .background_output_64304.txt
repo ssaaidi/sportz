@@ -1,5 +1,0 @@
-
-> sportz@1.0.0 start
-> node src/index.js
-
-Server is running at http://localhost:8000
