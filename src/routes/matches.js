@@ -7,6 +7,7 @@ import {matches} from "../db/schema.js";
 import {db} from "../db/db.js";
 import {getMatchStatus} from "../ utils/match-status.js";
 import {desc} from "drizzle-orm";
+import app from "express/lib/application.js";
 
 export const matchRouter = Router();
 
@@ -86,6 +87,9 @@ matchRouter.post("/", async (req, res) => {
 
             }).returning(); // to get back the event we created
 
+        if (res.app.locals.broadcastMatchCreated) {
+            res.app.locals.broadcastMatchCreated(event);
+        }
         // sends that newly created database row back to the browser:
         res.status(201).json({data: event});
 
