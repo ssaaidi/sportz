@@ -15,7 +15,7 @@ function sendJson(socket, payload) {
 // send data to every connected user
 function broadcast(wss, payload) {
     for (const client of wss.clients) {
-        if(client.readyState !== WebSocket.OPEN) return;
+        if(client.readyState !== WebSocket.OPEN) continue;
 
         client.send(JSON.stringify(payload));
     }
@@ -31,12 +31,28 @@ export function attachWebSocketServer(server) {
     });
 
     wss.on("connection", (socket) => {
+
+        socket.isAlive = true;
+        socket.on('pong', () =>{
+            socket.isAlive = true;
+        })
+
          // we want to send an initial message to confirm the link is active
         sendJson(socket, {payload: 'Welcome'});
 
         socket.on('error', console.error);
 
     });
+
+    const interval = setInterval(() => {
+        wss.clients.forEach((ws) => {
+            if(client.isAlive === false) ws.terminate();
+            ws.isAlive = false;
+            ws.ping();
+        });
+    }, 3000);
+
+    wss.on('close', () => clearInterval(interval));
 
     function broadcastMatchCreated(match){
         broadcast(wss, {type: 'match_created', data: match});
